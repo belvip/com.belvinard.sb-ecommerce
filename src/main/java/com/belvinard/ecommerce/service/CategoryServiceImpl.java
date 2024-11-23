@@ -1,7 +1,9 @@
 package com.belvinard.ecommerce.service;
 
 import com.belvinard.ecommerce.model.Category;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +31,9 @@ public class CategoryServiceImpl implements CategoryService {
     public String deleteCategory(Long categoryId) {
         Category category = categories.stream()
                 .filter(c ->c.getCategoryId().equals(categoryId))
-                .findFirst().orElse(null);
-        if (category == null){
-            return "Category not found";
-        }
+                .findFirst()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Resource not found"));
+
         categories.remove(category);
         return "Category with categoryId : " + categoryId + " deleted successfully";
 

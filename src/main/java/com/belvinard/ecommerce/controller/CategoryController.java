@@ -4,7 +4,10 @@ package com.belvinard.ecommerce.controller;
 import com.belvinard.ecommerce.model.Category; // Represents the Category model.
 import com.belvinard.ecommerce.service.CategoryService; // The service layer for managing category-related operations.
 import org.springframework.beans.factory.annotation.Autowired; // Used for dependency injection.
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List; // Used to represent a collection of Category objects.
 
@@ -33,10 +36,14 @@ public class CategoryController {
     }
 
     @DeleteMapping("api/admin/categories/{categoryId}")
-    public String  deleteCategory(@PathVariable("categoryId") Long categoryId){
-        String status = categoryService.deleteCategory(categoryId);
-
-        return status;
+    public ResponseEntity<String>  deleteCategory(@PathVariable("categoryId") Long categoryId){
+        // Implement ResponsesEntity
+        try {
+            String status = categoryService.deleteCategory(categoryId);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        }catch (ResponseStatusException e) {
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        }
 
     }
 }
