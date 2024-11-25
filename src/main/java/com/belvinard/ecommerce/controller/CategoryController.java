@@ -3,6 +3,7 @@ package com.belvinard.ecommerce.controller;
 // Import statements
 import com.belvinard.ecommerce.model.Category; // Represents the Category model.
 import com.belvinard.ecommerce.service.CategoryService; // The service layer for managing category-related operations.
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired; // Used for dependency injection.
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class CategoryController {
 
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@RequestBody Category category) {
+    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
         categoryService.createCategory(category); // Delegates the creation logic to the service layer.
         return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED); // Returns a confirmation message.
     }
