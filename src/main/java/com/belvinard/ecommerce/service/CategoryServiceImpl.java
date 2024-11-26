@@ -32,10 +32,10 @@ public class CategoryServiceImpl implements CategoryService{
      * @return A {@link CategoryResponse} object containing a list of all categories.
      * @throws APIException If no categories are found in the database.
      */
-   @Override
+    @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
-       Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
-       Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+        Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
 
         // Find all the categories in the database
         List<Category> categories = categoryPage.getContent();
@@ -53,11 +53,16 @@ public class CategoryServiceImpl implements CategoryService{
         // Create a CategoryResponse object and set its contents with the mapped DTOs
         CategoryResponse categoryResponse = new CategoryResponse();
         categoryResponse.setContents(categoryDTOS);
+        categoryResponse.setPageNumber(categoryPage.getNumber());
+        categoryResponse.setPagSize(categoryPage.getSize());
+        categoryResponse.setTotalElements(categoryPage.getTotalElements());
+        categoryResponse.setTotalPages(categoryPage.getTotalPages());
+        categoryResponse.setLastPage(categoryPage.isLast());
 
         // Return the CategoryResponse containing all the mapped CategoryDTOs
         return categoryResponse;
     }
-    
+
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
@@ -66,7 +71,7 @@ public class CategoryServiceImpl implements CategoryService{
         Category categoryFromDb = categoryRepository.findByCategoryName(category.getCategoryName());
         if (categoryFromDb != null)
             throw new APIException("Category with the name " + category.getCategoryName() + " already exists !!!");
-       Category savedCategory = categoryRepository.save(category);
+        Category savedCategory = categoryRepository.save(category);
 
         return modelMapper.map(savedCategory, CategoryDTO.class);
     }
