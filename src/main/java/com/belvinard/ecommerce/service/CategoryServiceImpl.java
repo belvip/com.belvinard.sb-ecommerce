@@ -57,12 +57,7 @@ public class CategoryServiceImpl implements CategoryService{
         // Return the CategoryResponse containing all the mapped CategoryDTOs
         return categoryResponse;
     }
-
-    @Override
-    public CategoryResponse getAllCategories() {
-        return null;
-    }
-
+    
 
     @Override
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
