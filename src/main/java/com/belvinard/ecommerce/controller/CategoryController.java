@@ -2,6 +2,7 @@ package com.belvinard.ecommerce.controller;
 
 // Import statements
 import com.belvinard.ecommerce.model.Category; // Represents the Category model.
+import com.belvinard.ecommerce.payload.CategoryResponse;
 import com.belvinard.ecommerce.service.CategoryService; // The service layer for managing category-related operations.
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired; // Used for dependency injection.
@@ -26,9 +27,9 @@ public class CategoryController {
 
 
     @GetMapping("/public/categories")
-    public ResponseEntity<List<Category> > getAllCategories() {
-        List<Category> allCategories = categoryService.getAllCategories();
-        return new ResponseEntity<>(allCategories, HttpStatus.OK); // Delegates the call to the service layer.
+    public ResponseEntity<CategoryResponse> getAllCategories() {
+        CategoryResponse categoryResponse = categoryService.getAllCategories();
+        return new ResponseEntity<>(categoryResponse, HttpStatus.OK); // Delegates the call to the service layer.
     }
 
 
@@ -46,7 +47,7 @@ public class CategoryController {
     }
 
     @PutMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<String> updateCategory(@Valid @PathVariable Long categoryId,
+    public ResponseEntity<String> updateCategory(@Valid  @PathVariable Long categoryId,
                                                  @RequestBody Category category) {
 
         Category savedCategory =  categoryService.updateCategory(category, categoryId);
