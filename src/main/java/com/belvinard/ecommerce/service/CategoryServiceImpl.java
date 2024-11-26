@@ -11,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CategoryServiceImpl implements CategoryService{
+ public class CategoryServiceImpl implements CategoryService{
     //private List<Category> categories = new ArrayList<>();
     //private Long nextId = 1L;
 
@@ -33,8 +34,12 @@ public class CategoryServiceImpl implements CategoryService{
      * @throws APIException If no categories are found in the database.
      */
     @Override
-    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sortByAnOrder = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAnOrder);
         Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
 
         // Find all the categories in the database
