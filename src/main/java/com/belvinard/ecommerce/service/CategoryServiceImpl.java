@@ -3,6 +3,7 @@ package com.belvinard.ecommerce.service;
 import com.belvinard.ecommerce.exceptions.APIException;
 import com.belvinard.ecommerce.exceptions.ResourceNotFoundException;
 import com.belvinard.ecommerce.model.Category;
+import com.belvinard.ecommerce.payload.CategoryResponse;
 import com.belvinard.ecommerce.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ public class CategoryServiceImpl implements CategoryService{
     private CategoryRepository categoryRepository;
 
     @Override
-    public List<Category> getAllCategories() {
+    public CategoryResponse getAllCategories() {
         // Find all the categories
         List<Category> categories = categoryRepository.findAll();
         if(categories.isEmpty()){
