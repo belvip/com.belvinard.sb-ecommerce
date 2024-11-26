@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl implements CategoryService{
@@ -30,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService{
      * @return A {@link CategoryResponse} object containing a list of all categories.
      * @throws APIException If no categories are found in the database.
      */
-    @Override
+   @Override
     public CategoryResponse getAllCategories() {
         // Find all the categories in the database
         List<Category> categories = categoryRepository.findAll();
