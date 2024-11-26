@@ -2,6 +2,7 @@ package com.belvinard.ecommerce.controller;
 
 // Import statements
 import com.belvinard.ecommerce.model.Category; // Represents the Category model.
+import com.belvinard.ecommerce.payload.CategoryDTO;
 import com.belvinard.ecommerce.payload.CategoryResponse;
 import com.belvinard.ecommerce.service.CategoryService; // The service layer for managing category-related operations.
 import jakarta.validation.Valid;
@@ -34,24 +35,24 @@ public class CategoryController {
 
 
     @PostMapping("/public/categories")
-    public ResponseEntity<String> createCategory(@Valid @RequestBody Category category) {
-        categoryService.createCategory(category); // Delegates the creation logic to the service layer.
-        return new ResponseEntity<>("Category added successfully", HttpStatus.CREATED); // Returns a confirmation message.
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO savedCategory = categoryService.createCategory(categoryDTO); // Delegates the creation logic to the service layer.
+        return new ResponseEntity<>(savedCategory, HttpStatus.CREATED); // Returns a confirmation message.
     }
 
     @DeleteMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<String>  deleteCategory(@PathVariable("categoryId") Long categoryId){
+    public ResponseEntity<CategoryDTO>  deleteCategory(@PathVariable("categoryId") Long categoryId){
         // Implement ResponsesEntity
-        String status = categoryService.deleteCategory(categoryId);
-        return new ResponseEntity<>(status, HttpStatus.OK);
+        CategoryDTO deleteCategory = categoryService.deleteCategory(categoryId);
+        return new ResponseEntity<>(deleteCategory, HttpStatus.OK);
     }
 
     @PutMapping("/admin/categories/{categoryId}")
-    public ResponseEntity<String> updateCategory(@Valid  @PathVariable Long categoryId,
-                                                 @RequestBody Category category) {
+    public ResponseEntity<CategoryDTO> updateCategory(@Valid  @PathVariable Long categoryId,
+                                                 @RequestBody CategoryDTO categoryDTO) {
 
-        Category savedCategory =  categoryService.updateCategory(category, categoryId);
-        return new ResponseEntity<>("Category with category id : " + categoryId, HttpStatus.OK);
+        CategoryDTO savedCategoryDTO =  categoryService.updateCategory(categoryDTO, categoryId);
+        return new ResponseEntity<>(savedCategoryDTO, HttpStatus.OK);
 
 
     }
