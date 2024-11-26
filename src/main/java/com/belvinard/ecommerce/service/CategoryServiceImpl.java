@@ -8,6 +8,9 @@ import com.belvinard.ecommerce.payload.CategoryResponse;
 import com.belvinard.ecommerce.repositories.CategoryRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,9 +33,12 @@ public class CategoryServiceImpl implements CategoryService{
      * @throws APIException If no categories are found in the database.
      */
    @Override
-    public CategoryResponse getAllCategories() {
+    public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize) {
+       Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
+       Page<Category> categoryPage = categoryRepository.findAll(pageDetails);
+
         // Find all the categories in the database
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryPage.getContent();
 
         // If no categories are found, throw an APIException
         if (categories.isEmpty()) {
@@ -50,6 +56,11 @@ public class CategoryServiceImpl implements CategoryService{
 
         // Return the CategoryResponse containing all the mapped CategoryDTOs
         return categoryResponse;
+    }
+
+    @Override
+    public CategoryResponse getAllCategories() {
+        return null;
     }
 
 
