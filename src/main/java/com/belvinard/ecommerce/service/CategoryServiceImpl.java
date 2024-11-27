@@ -35,6 +35,11 @@ import java.util.List;
      */
     @Override
     public CategoryResponse getAllCategories(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        // Validation
+        if (pageSize < 1) {
+            throw new IllegalArgumentException("Page size must not be less than one.");
+        }
+
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
