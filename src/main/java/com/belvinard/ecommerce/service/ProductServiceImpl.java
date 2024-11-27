@@ -4,11 +4,14 @@ import com.belvinard.ecommerce.exceptions.ResourceNotFoundException;
 import com.belvinard.ecommerce.model.Category;
 import com.belvinard.ecommerce.model.Product;
 import com.belvinard.ecommerce.payload.ProductDTO;
+import com.belvinard.ecommerce.payload.ProductResponse;
 import com.belvinard.ecommerce.repositories.CategoryRepository;
 import com.belvinard.ecommerce.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProductServiceImpl implements ProductService  {
@@ -37,5 +40,17 @@ public class ProductServiceImpl implements ProductService  {
 
         // Return the productDTO
         return modelMapper.map(savedProduct, ProductDTO.class);
+    }
+
+    @Override
+    public ProductResponse getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
     }
 }
