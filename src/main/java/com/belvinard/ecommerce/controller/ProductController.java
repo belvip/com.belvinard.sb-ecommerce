@@ -1,6 +1,5 @@
 package com.belvinard.ecommerce.controller;
 
-import com.belvinard.ecommerce.model.Product;
 import com.belvinard.ecommerce.payload.ProductDTO;
 import com.belvinard.ecommerce.payload.ProductResponse;
 import com.belvinard.ecommerce.service.ProductService;
@@ -17,10 +16,10 @@ public class ProductController {
     ProductService productService;
 
     @PostMapping("/admin/categories/{categoryId}/product")
-    public ResponseEntity<ProductDTO> addProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO,
                                                  @PathVariable Long categoryId){
-        ProductDTO productDTO = productService.addProduct(categoryId, product);
-        return new ResponseEntity<>(productDTO, HttpStatus.CREATED);
+        ProductDTO savedProductDTO = productService.addProduct(categoryId, productDTO);
+        return new ResponseEntity<>(savedProductDTO, HttpStatus.CREATED);
 
     }
 
@@ -46,9 +45,9 @@ public class ProductController {
 
     /* ================================================ UPDATE PRODUCT ================================================ */
     @PutMapping("/admin/products/{productId}")
-    public ResponseEntity<ProductDTO> updateProduct(@RequestBody Product product,
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody ProductDTO productDTO,
                                                    @PathVariable Long productId){
-        ProductDTO updateProductDTO =  productService.updateProduct(productId, product);
+        ProductDTO updateProductDTO =  productService.updateProduct(productId, productDTO);
         return new ResponseEntity<>(updateProductDTO, HttpStatus.OK);
 
     }
