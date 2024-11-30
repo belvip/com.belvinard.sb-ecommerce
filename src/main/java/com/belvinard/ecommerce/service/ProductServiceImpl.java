@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+@Service // use for business logic
 public class ProductServiceImpl implements ProductService  {
 
     @Autowired
@@ -25,6 +25,7 @@ public class ProductServiceImpl implements ProductService  {
     @Autowired
     private ModelMapper modelMapper;
 
+    /* ================================================ ADD PRODUCT ================================================ */
     @Override
     public ProductDTO addProduct(Long categoryId, Product product) {
         Category category = categoryRepository.findById(categoryId) // If category existing, return the category
@@ -42,6 +43,8 @@ public class ProductServiceImpl implements ProductService  {
         return modelMapper.map(savedProduct, ProductDTO.class);
     }
 
+    /* ================================================ GET ALL PRODUCT ================================================ */
+
     @Override
     public ProductResponse getAllProducts() {
         List<Product> products = productRepository.findAll();
@@ -54,6 +57,7 @@ public class ProductServiceImpl implements ProductService  {
         return productResponse;
     }
 
+    /* ================================================ GET PRODUCT BY CATEGORY ================================================ */
     @Override
     public ProductResponse searchByCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId) // If category existing, return the category
@@ -69,5 +73,41 @@ public class ProductServiceImpl implements ProductService  {
         productResponse.setContent(productDTOS);
         return productResponse;
     }
+
+    /* ================================================ SEARCH PRODUCT BY KEYWORD ================================================ */
+
+    @Override
+    public ProductResponse searchProductByKeyword(String keyword) {
+        List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
+        List<ProductDTO> productDTOS = products.stream()
+                .map(product -> modelMapper.map(product, ProductDTO.class))
+                .toList();
+
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setContent(productDTOS);
+        return productResponse;
+    }
+
+    @Override
+    public ProductDTO updateProduct(Long productId, Product product) {
+
+        // Get the existing product from the database
+        Product productFromDb = productRepository.findById(productId)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "product", productId));
+
+        // Update the product info with one in request body
+        productFromDb.setProductName(product.getProductName());
+        productFromDb.setDescription(product.getDescription());
+        productFromDb.setQuantity(product.getQuantity());
+        productFromDb.setPrice(product.getPrice());
+        productFromDb.setDiscount(product.getDiscount());
+        productFromDb.setSpecialPrice(product.getSpecialPrice());
+
+        // Save to database
+        Product savedProduct = productRepository.save(productFromDb);
+
+        return modelMapper.map(savedProduct, ProductDTO.class);
+    }
+
 
 }
