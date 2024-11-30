@@ -9,15 +9,13 @@ import com.belvinard.ecommerce.repositories.CategoryRepository;
 import com.belvinard.ecommerce.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service // use for business logic
 public class ProductServiceImpl implements ProductService  {
@@ -30,6 +28,12 @@ public class ProductServiceImpl implements ProductService  {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private FileService fileService;
+
+    @Value("${project.image}")
+    private String path;
 
     /* ================================================ ADD PRODUCT ================================================ */
     @Override
@@ -140,8 +144,8 @@ public class ProductServiceImpl implements ProductService  {
 
         // Upload image to server
         // Get the file name of uploaded image
-        String path = "images/";
-        String fileName = uploadImage(path, image);
+        //String path = "images/";
+        String fileName = fileService.uploadImage(path, image);
 
         // Updating the new file name to the product
         productFromDb.setImage(fileName);
@@ -154,29 +158,7 @@ public class ProductServiceImpl implements ProductService  {
 
     }
 
-    private String uploadImage(String path, MultipartFile file) throws IOException {
-        // 1. File names of current / original file
-        String originalFileName = file.getOriginalFilename();
 
-        // 2. Generate a unique file name
-        String randomId = UUID.randomUUID().toString();
-        // mat.jpg --> 1234 --> 1234.jpg
-        String fileName = randomId.concat(originalFileName.substring(originalFileName.lastIndexOf('.')));
-        String filePath = path + File.separator + fileName;
-
-        // 3. Check if path exist and create
-        File folder = new File(path);
-        if(!folder.exists()){
-            folder.mkdir();
-        }
-
-        // 4. Upload to server
-        Files.copy(file.getInputStream(), Paths.get(filePath));
-
-        // 5. Returning file name
-        return fileName;
-
-    }
 
 
 }
