@@ -24,4 +24,8 @@ public class Category {
     @Column(nullable = false, unique = true) // Added column constraints
     private String categoryName;
 
+    // Add bidirectional relationship
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private List<Product> products;
+
 }

@@ -1,5 +1,6 @@
 package com.belvinard.ecommerce.service;
 
+import com.belvinard.ecommerce.exceptions.APIException;
 import com.belvinard.ecommerce.exceptions.ResourceNotFoundException;
 import com.belvinard.ecommerce.model.Category;
 import com.belvinard.ecommerce.model.Product;
@@ -38,31 +39,59 @@ public class ProductServiceImpl implements ProductService  {
     /* ================================================ ADD PRODUCT ================================================ */
     @Override
     public ProductDTO addProduct(Long categoryId, ProductDTO productDTO) {
-        Category category = categoryRepository.findById(categoryId) // If category existing, return the category
+
+        Category category = categoryRepository.findById(categoryId) // If category exist, return the category
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Category", "categoryId", categoryId));
 
-        Product product = modelMapper.map(productDTO, Product.class);
-        product.setImage("default.png");
-        product.setCategory(category);
-        double specialPrice = product.getPrice() -
-                ((product.getDiscount() * 0.01) * product.getPrice());
-        product.setSpecialPrice(specialPrice);
-        Product savedProduct = productRepository.save(product);
+        // ======== Check if product already present or not ========
+        /* Check if product exists into the database */
+        boolean isProductNoPresent = true;
 
-        // Return the productDTO
-        return modelMapper.map(savedProduct, ProductDTO.class);
+        List<Product> products = category.getProducts();
+        for (Product value : products) {
+            if (value.getProductName().equals(productDTO.getProductName())) {
+                isProductNoPresent = false;
+                break;
+            }
+        }
+
+        if(isProductNoPresent) {
+            Product product = modelMapper.map(productDTO, Product.class);
+            product.setImage("default.png");
+            product.setCategory(category);
+            double specialPrice = product.getPrice() -
+                    ((product.getDiscount() * 0.01) * product.getPrice());
+            product.setSpecialPrice(specialPrice);
+            Product savedProduct = productRepository.save(product);
+
+            // Return the productDTO
+            return modelMapper.map(savedProduct, ProductDTO.class);
+
+        }else {
+            throw new APIException("Product already exist !!");
+        }
+
     }
 
     /* ================================================ GET ALL PRODUCT ================================================ */
-
     @Override
     public ProductResponse getAllProducts() {
+        // Check if products size is 0
+        // Fetch all products from the repository
         List<Product> products = productRepository.findAll();
+
+        // Check if the list of products is empty
+        if (products.isEmpty()) {
+            throw new APIException("No products have been added yet.");
+        }
+
+        // Map products to ProductDTO
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
                 .toList();
 
+        // Create and return the ProductResponse
         ProductResponse productResponse = new ProductResponse();
         productResponse.setContent(productDTOS);
         return productResponse;
@@ -71,6 +100,7 @@ public class ProductServiceImpl implements ProductService  {
     /* ================================================ GET PRODUCT BY CATEGORY ================================================ */
     @Override
     public ProductResponse searchByCategory(Long categoryId) {
+
         Category category = categoryRepository.findById(categoryId) // If category existing, return the category
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Category", "categoryId", categoryId));
@@ -89,6 +119,7 @@ public class ProductServiceImpl implements ProductService  {
 
     @Override
     public ProductResponse searchProductByKeyword(String keyword) {
+        // products size is 0
         List<Product> products = productRepository.findByProductNameLikeIgnoreCase('%' + keyword + '%');
         List<ProductDTO> productDTOS = products.stream()
                 .map(product -> modelMapper.map(product, ProductDTO.class))
