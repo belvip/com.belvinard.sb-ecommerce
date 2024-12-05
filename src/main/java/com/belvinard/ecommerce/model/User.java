@@ -77,4 +77,9 @@ public class User {
 // A set is used to store unique roles for a user. The initialization ensures that
 // the collection is ready to use without explicitly initializing it elsewhere.
 
+    @OneToMany(mappedBy = "user",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            orphanRemoval = true)
+    private Set<Product> products;
+
 }
