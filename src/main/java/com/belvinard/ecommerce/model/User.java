@@ -86,8 +86,7 @@ public class User {
     @JoinTable(name = "user_address",
                 joinColumns = @JoinColumn(name = "user_id"),
                 inverseJoinColumns = @JoinColumn(name = "address_id"))
-    private List<Address> addresses
-            = new ArrayList<>();
+    private List<Address> addresses = new ArrayList<>();
 
     @ToString.Exclude
     @OneToMany(mappedBy = "user",
