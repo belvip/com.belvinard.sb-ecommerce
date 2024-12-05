@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -76,6 +78,13 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 // A set is used to store unique roles for a user. The initialization ensures that
 // the collection is ready to use without explicitly initializing it elsewhere.
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(name = "user_address",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "address_id"))
+    private List<Address> addresses
+            = new ArrayList<>();
 
     @OneToMany(mappedBy = "user",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
