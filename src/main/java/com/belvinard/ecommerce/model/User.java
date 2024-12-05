@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -79,6 +80,8 @@ public class User {
 // A set is used to store unique roles for a user. The initialization ensures that
 // the collection is ready to use without explicitly initializing it elsewhere.
 
+    @Getter
+    @Setter
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "user_address",
                 joinColumns = @JoinColumn(name = "user_id"),
@@ -86,6 +89,7 @@ public class User {
     private List<Address> addresses
             = new ArrayList<>();
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "user",
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
             orphanRemoval = true)
